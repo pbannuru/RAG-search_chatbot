@@ -6,8 +6,8 @@
  
 # # Create a Secrets Manager client
 # session = boto3.Session(
-#     aws_access_key_id="AKIA4MTWKGQQOBOCR6TB",
-#     aws_secret_access_key="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",
+#     aws_access_key_id="",
+#     aws_secret_access_key=",
 # )
  
 # client = session.client(service_name="secretsmanager", region_name=region_name)
