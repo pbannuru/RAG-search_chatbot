@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: knowledgesearch-web
+  namespace: knowledgesearch
+spec:
+  gateways:
+  - knowledgesearch-gateway
+  hosts:
+  - kcs-itg.corp.hpicloud.net
+  http:
+  - match:
+    - uri:
+        prefix: /api/v1
+    - uri:
+        prefix: /api/internal
+    - uri:
+        prefix: /api/isearchui
+    - uri:
+        prefix: /api/load
+    route:
+    - destination:
+        host: ks-service-nest-release-to-stage-v2.knowledgesearch.svc.cluster.local
+        port:
+          number: 8
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: nextjs-knowledgesearch-ui-v1.knowledgesearch.svc.cluster.local
+        port:
+          number: 3000

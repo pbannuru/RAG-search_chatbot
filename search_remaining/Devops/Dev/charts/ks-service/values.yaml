@@ -1,0 +1,94 @@
+# Default values for ks-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deployment:
+  version: v1
+
+replicaCount: 1
+
+namespace: "knowledgesearch"
+
+image:
+  repository: "harbor.ext.hp.com/knowledge_search/ks_service_nest_release_to_daily"
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets:
+- name: "harborcred-new-1"
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {eks.amazonaws.com/role-arn: arn:aws:iam::851725399072:role/ks-service-account}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "ks-service-nest"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # Example: fsGroup: 2000
+
+securityContext: {}
+  # Example:
+  # capabilities:
+  #   drop:
+  #     - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 8
+
+database:
+  secretName: "ks-db-s"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # Example:
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Uncomment and configure the following if needed:
+
+# database:
+#   secretName: "ks-db"
+
+# awsSecretsName:
+#   rds: Dev_KS/ks-dev-cluster-knowledgesearch-db-sql/rds
+#       dev/ks-demo/rds
+#   common: dev/ks/common
+
+# env:
+#   DB_NAME: ks-demo-dev
+#   RAILS_ENV: demo
+#   SERVICE_NAME: 'ks-service'
+

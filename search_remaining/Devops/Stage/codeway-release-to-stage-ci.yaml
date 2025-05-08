@@ -1,0 +1,112 @@
+resources:
+  repositories:
+    - repository: templates
+      type: githubenterprise
+      name: codeway/templates
+      endpoint: ghe
+
+trigger:
+  branches:
+    include:
+      - release_to_stage
+  paths:
+    exclude:
+      - charts
+      - codeway-release-to-stage-ci.yaml
+      - codeway-release-to-stage-cd.yaml
+
+variables:
+  - group: nextjs-knowledgesearch
+  - name: branch
+    value: release_to_stage
+
+stages:
+  - template: templates/codeway-docker-image-v1-beta2.yaml@templates
+    parameters:
+      anchoreScan: false
+      trivyScan: false
+      project: knowledge_search
+      repo: ks_service_nest_${{ variables.branch }}
+      registryType: harbor
+      releaseBranch: ${{ variables.branch }}
+      registryParameters:
+        - registry: harbor-knowledge_search
+
+  # Uncomment this section to enable the Run_Test_Cases stage
+  # - stage: "Run_Test_Cases"
+  #   displayName: "Run Testcases"
+  #   variables:
+  #     - template: lib/codeway-default-pool.yml@templates
+  #   jobs:
+  #     - job: RunShellScript
+  #       displayName: Run Shell Script
+  #       pool: ${{ variables.pool }}
+  #       steps:
+  #         - task: Docker@2
+  #           displayName: "Harbor Login"
+  #           inputs:
+  #             containerRegistry: Harbor-pwi
+  #             command: login
+  #         - task: DownloadSecureFile@1
+  #           name: Envfile
+  #           inputs:
+  #             secureFile: '.env'
+  #         - script: sh test.sh $(mysql_password) harbor.ext.hp.com/pwi-installation/pwi_service_${{ variables.branch }}:latest  $(Pipeline.Workspace)
+  #         - task: PublishPipelineArtifact@1
+  #           inputs:
+  #             targetPath: "$(Pipeline.Workspace)"
+  #             artifactName: "testcase_artifacts"
+
+  #- stage: build_and_sonarqube_scan
+  #  displayName: "Build and SonarQube Scanning"
+  #  variables:
+  #    - template: lib/codeway-default-pool.yml@templates
+  #  jobs:
+  #    - job: BuildAndScan
+  #      displayName: "Build and Scan"
+  #      pool: ${{ variables.pool }}
+  #      steps:
+  #        - template: lib/installers/java-openjdk-v0.yaml@templates
+  #        - template: lib/installers/nodejs-v0.yaml@templates
+  #          parameters:
+  #            version: "16.13.0"
+  #        - template: steps/node/npm-command-v0.yaml@templates
+  #          parameters:
+  #            command: "install"
+  #        - template: steps/node/npm-command-v0.yaml@templates
+  #          parameters:
+  #            command: "run-script test:cov"
+  #        - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+  #          displayName: "Prepare analysis on SonarQube"
+  #          inputs:
+  #            SonarQube: SonarQube
+  #            scannerMode: CLI
+  #            configMode: manual
+  #            cliProjectKey: "KWS_KnowledgeSearch_N-API"
+  #            cliProjectName: "KnowledgeSearch_N-API"
+  #            cliProjectVersion: $(Build.BuildNumber)
+  #            extraProperties: |
+  #              sonar.branch.name=daily_master_v1
+  #              sonar.sources=src
+  #              sonar.profile=node
+  #              sonar.exclusions=**/node_modules/**,**/*module.ts,**/*.spec.ts,src/main.ts,src/test.ts,src/xls/xls.helper.ts,*.dto.ts,*.strategy.ts,*.guard.ts,src/xls/xls.service.ts,*.entity.ts
+  #              sonar.coverage.exclusions=**/*module.ts,**/*.spec.ts,src/main.ts,src/test.ts,src/xls/xls.helper.ts,*.dto.ts,*.strategy.ts,*.guard.ts,src/xls/xls.service.ts,*.entity.ts
+  #              sonar.javascript.lcov.reportPaths=coverage/lcov.info
+  #          condition: always()
+  #        - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+  #          displayName: "Run Code Analysis"
+  #          condition: always()
+
+  - template: templates/codeway-helm-library-v0.yaml@templates
+    parameters:
+      releaseBranch: ${{ variables.branch }}
+      chartName: ks-service-nest-release-to-stage
+      chartDir: $(Build.SourcesDirectory)/Devops/Stage/charts/ks-services
+      versionMajorMinor: '5.6'
+      publishRepositories:
+        - name: "ks-service-nest-release-to-stage"
+          url: "https://harbor.ext.hp.com/chartrepo/knowledge_search"
+          username: $(harbor_username)
+          password: $(harbor_password)
+          type: harbor
+

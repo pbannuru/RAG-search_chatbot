@@ -1,0 +1,241 @@
+# {{- range $i, $job := .Values.jobs }}
+# apiVersion: batch/v1
+# kind: CronJob
+# metadata:
+#   name: {{ $job.name }}
+#   namespace: {{ $.Values.namespace }}
+#   labels:
+#     app: {{ include "ks-service-batchjob.fullname" $ }}
+#   annotations:
+#     sidecar.istio.io/inject: "false"
+# spec:
+#   schedule: "{{ $job.schedule }}"
+#   concurrencyPolicy: {{ $.Values.concurrencyPolicy }}
+#   failedJobsHistoryLimit: {{ $.Values.failedJobsHistoryLimit }}
+#   successfulJobsHistoryLimit: {{ $.Values.successfulJobsHistoryLimit }}
+#   jobTemplate:
+#     spec:
+#       backoffLimit: {{ $.Values.backoffLimit }}
+#       template:
+#         metadata:
+#           annotations:
+#             sidecar.istio.io/inject: "false"
+#         spec:
+#           serviceAccountName: {{ $.Values.serviceAccountName }}
+#           restartPolicy: OnFailure
+#           containers:
+#             - name: {{ include "ks-service-batchjob.containername" $ }}
+#               image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+#               imagePullPolicy: {{ $.Values.image.pullPolicy }}
+#               command:
+#                 - /bin/sh
+#                 - -c
+#                 - "{{ $job.command }}"
+#               envFrom:
+#                 - secretRef:
+#                     name: {{ $.Values.envSecretName }}  # Matches the secret from the deployment
+#               resources:
+#                 {{- toYaml $.Values.resources | nindent 12 }}
+#           imagePullSecrets:
+#             {{- if $.Values.imagePullSecrets }}
+#             {{- include "ks-service-batchjob.imagePullSecrets" $ | nindent 8 }}
+#             {{- end }}
+#           volumes:
+#             {{- if $.Values.volumes }}
+
+
+
+
+
+
+# apiVersion: batch/v1
+# kind: CronJob
+# metadata:
+#   name: cronjob-incremental
+#   labels:
+#     app: ks-service
+#   namespace: knowledgesearch
+# spec:
+#   schedule: "0 1 * * *"  # Runs at 1:00 AM daily
+#   successfulJobsHistoryLimit: 3
+#   failedJobsHistoryLimit: 3
+#   jobTemplate:
+#     spec:
+#       ttlSecondsAfterFinished: 600  # Terminate pods 10 minutes after completion
+#       backoffLimit: 2
+#       template:
+#         metadata:
+#           annotations:
+#             sidecar.istio.io/inject: "false"  # Disable Istio sidecar injection
+#         spec:
+#           serviceAccountName: ks-service-nest  # Matches the service account
+#           imagePullSecrets:
+#             - name: harborcred  # Image pull secret from the deployment
+#           restartPolicy: OnFailure
+#           containers:
+#             - name: ks-service-batchjob-incremental-stage
+#               image: "harbor.ext.hp.com/knowledge_search/ks_service_batchjob_release_to_stage:latest"
+#               imagePullPolicy: Always
+#               command:
+#                 - /bin/sh
+#                 - -c
+#                 - |
+#                   set -e
+#                   apt-get update && apt-get install -y awscli && rm -rf /var/lib/apt/lists/*
+#                   mkdir -p /logs/stage/incremental && \
+#                   . /opt/env/bin/activate && \
+#                   python run_tasks.py >> /logs/stage/incremental/job.output 2>> /logs/stage/incremental/job.errors && \
+#                   if [ ! -f /logs/stage/incremental/job.output ]; then
+#                     echo "Error: job.output not found!" >> /logs/stage/incremental/job.errors
+#                     exit 1
+#                   fi
+#                   CURRENT_DATE=$(date +'%Y-%m-%d')
+#                   aws s3 cp /logs/stage/incremental/job.output s3://api-batchjob-logs/logs/stage/incremental/$CURRENT_DATE/job.output --region us-west-2 >> /logs/stage/incremental/s3.log 2>> /logs/stage/incremental/s3.errors || { echo "Failed to copy job.output to S3" >> /logs/stage/incremental/s3.errors; exit 1; }
+#                   aws s3 cp /logs/stage/incremental/job.errors s3://api-batchjob-logs/logs/stage/incremental/$CURRENT_DATE/job.errors --region us-west-2 >> /logs/stage/incremental/s3.log 2>> /logs/stage/incremental/s3.errors || { echo "Failed to copy job.errors to S3" >> /logs/stage/incremental/s3.errors; exit 1; }
+#               envFrom:
+#                 - secretRef:
+#                     name: ks-db-s  # Secret with environment variables
+#               volumeMounts:
+#                 - mountPath: /logs
+#                   name: shared-data
+#           nodeSelector:
+#             name: cron-job  # Ensure correct nodeSelector
+#           tolerations:
+#             - key: "name"
+#               operator: "Equal"
+#               value: "cron-job"
+#               effect: "NoSchedule"
+#           volumes:
+#             - name: shared-data
+#               emptyDir: {}
+
+
+
+
+# apiVersion: batch/v1
+# kind: CronJob
+# metadata:
+#   name: cronjob-cleaner
+#   labels:
+#     app: ks-service
+#   namespace: knowledgesearch
+# spec:
+#   schedule: "0 5 1,16 * * "  # Runs at 3:00 AM every Friday
+#   successfulJobsHistoryLimit: 3
+#   failedJobsHistoryLimit: 3
+#   jobTemplate:
+#     spec:
+#       ttlSecondsAfterFinished: 600  # Terminate pods 10 minutes after completion
+#       backoffLimit: 2
+#       template:
+#         metadata:
+#           annotations:
+#             sidecar.istio.io/inject: "false"  # Disable Istio sidecar injection
+#         spec:
+#           serviceAccountName: ks-service-nest  # Matches the service account
+#           imagePullSecrets:
+#             - name: harborcred  # Image pull secret from the deployment
+#           restartPolicy: OnFailure
+#           containers:
+#             - name: ks-service-batchjob-cleaner-stage
+#               image: "harbor.ext.hp.com/knowledge_search/ks_service_batchjob_release_to_stage:latest"
+#               imagePullPolicy: Always
+#               command:
+#                 - /bin/sh
+#                 - -c
+#                 - |
+#                   set -e
+#                   apt-get update && apt-get install -y awscli && rm -rf /var/lib/apt/lists/*
+#                   mkdir -p /logs/cleaner && \
+#                   python run_cleaner_tasks.py >> /logs/stage/cleaner/cleaner.output 2>> /logs/stage/cleaner/cleaner.errors && \
+#                   if [ ! -f /logs/stage/cleaner/cleaner.output ]; then
+#                     echo "Error: cleaner.output not found!" >> /logs/stage/cleaner/cleaner.errors
+#                     exit 1
+#                   fi
+#                   CURRENT_DATE=$(date +'%Y-%m-%d')
+#                   aws s3 cp /logs/stage/cleaner/cleaner.output s3://api-batchjob-logs/logs/stage/cleaner/$CURRENT_DATE/cleaner.output --region us-west-2 >> /logs/stage/cleaner/s3.log 2>> /logs/stage/cleaner/s3.errors || { echo "Failed to copy cleaner.output to S3" >> /logs/stage/cleaner/s3.errors; exit 1; }
+#                   aws s3 cp /logs/stage/cleaner/cleaner.errors s3://api-batchjob-logs/logs/stage/cleaner/$CURRENT_DATE/cleaner.errors --region us-west-2 >> /logs/stage/cleaner/s3.log 2>> /logs/stage/cleaner/s3.errors || { echo "Failed to copy cleaner.errors to S3" >> /logs/stage/cleaner/s3.errors; exit 1; }
+#               envFrom:
+#                 - secretRef:
+#                     name: ks-db-s  # Secret with environment variables
+#               volumeMounts:
+#                 - mountPath: /logs
+#                   name: shared-data
+#           nodeSelector:
+#             name: cron-job  # Ensure correct nodeSelector
+#           tolerations:
+#             - key: "name"
+#               operator: "Equal"
+#               value: "cron-job"
+#               effect: "NoSchedule"
+#           volumes:
+#             - name: shared-data
+#               emptyDir: {}
+
+
+
+# apiVersion: batch/v1
+# kind: CronJob
+# metadata:
+#   name: cronjob-historical
+#   labels:
+#     app: ks-service
+#   namespace: knowledgesearch
+# spec:
+#   schedule: "0 3 * * 5"  # Runs at 3:00 AM every Friday
+#   successfulJobsHistoryLimit: 3
+#   failedJobsHistoryLimit: 3
+#   jobTemplate:
+#     spec:
+#       ttlSecondsAfterFinished: 600  # Terminate pods 10 minutes after completion
+#       backoffLimit: 2
+#       template:
+#         metadata:
+#           annotations:
+#             sidecar.istio.io/inject: "false"  # Disable Istio sidecar injection
+#         spec:
+#           serviceAccountName: ks-service-nest  # Matches the service account
+#           imagePullSecrets:
+#             - name: harborcred  # Image pull secret from the deployment
+#           restartPolicy: OnFailure
+#           containers:
+#             - name: ks-service-batchjob-historical-stage
+#               image: "harbor.ext.hp.com/knowledge_search/ks_service_batchjob_release_to_stage:latest"
+#               imagePullPolicy: Always
+#               command:
+#                 - /bin/sh
+#                 - -c
+#                 - |
+#                   set -e  # Exit if any command fails
+#                   # Install AWS CLI
+#                   apt-get update && apt-get install -y awscli && rm -rf /var/lib/apt/lists/*
+#                   mkdir -p /logs/stage/historical && \
+#                   . /opt/env/bin/activate && \
+#                   python run_tasks.py --historical kaas docebo kz >> /logs/stage/historical/job_historical.output 2>> /logs/stage/historical/job_historical.errors && \
+
+#                   # Check if logs were generated
+#                   if [ ! -f /logs/stage/historical/job_historical.output ]; then
+#                     echo "Error: job_historical.output not found!" >> /logs/stage/historical/job_historical.errors
+#                     exit 1
+#                   fi
+#                   # Get the current date in YYYY-MM-DD format
+#                   CURRENT_DATE=$(date +'%Y-%m-%d')
+#                   # Copy logs to S3 with date-wise structure
+#                   aws s3 cp /logs/stage/historical/job_historical.output "s3://api-batchjob-logs/logs/stage/historical/$CURRENT_DATE/job_historical.output" --region us-west-2 >> /logs/stage/historical/s3.log 2>> /logs/stage/historical/s3.errors || { echo "Failed to copy job_historical.output to S3" >> /logs/stage/historical/s3.errors; exit 1; }
+#                   aws s3 cp /logs/stage/historical/job_historical.errors "s3://api-batchjob-logs/logs/stage/historical/$CURRENT_DATE/job_historical.errors" --region us-west-2 >> /logs/stage/historical/s3.log 2>> /logs/stage/historical/s3.errors || { echo "Failed to copy job_historical.errors to S3" >> /logs/stage/historical/s3.errors; exit 1; }
+#               envFrom:
+#                 - secretRef:
+#                     name: ks-db-s  # Secret with environment variables
+#               volumeMounts:
+#                 - mountPath: /logs
+#                   name: shared-data
+#           nodeSelector:
+#             name: cron-job  # Ensure correct nodeSelector
+#           tolerations:
+#             - key: "name"
+#               operator: "Equal"
+#               value: "cron-job"
+#               effect: "NoSchedule"
+#           volumes:
+#             - name: shared-data
+#               emptyDir: {}

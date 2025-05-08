@@ -1,0 +1,47 @@
+{{- range $i, $job := .Values.jobs }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $job.name }}
+  namespace: {{ $.Values.namespace }}
+  labels:
+    app: {{ include "ks-service-batchjob.fullname" $ }}
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  schedule: "{{ $job.schedule }}"
+  concurrencyPolicy: {{ $.Values.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ $.Values.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ $.Values.successfulJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ $.Values.backoffLimit }}
+      template:
+        metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
+        spec:
+          serviceAccountName: {{ $.Values.serviceAccountName }}
+          restartPolicy: OnFailure
+          containers:
+            - name: {{ include "ks-service-batchjob.containername" $ }}
+              image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+              imagePullPolicy: {{ $.Values.image.pullPolicy }}
+              command:
+                - /bin/sh
+                - -c
+                - "{{ $job.command }}"
+              envFrom:
+                - secretRef:
+                    name: {{ $.Values.envSecretName }}  # Matches the secret from the deployment
+              resources:
+                {{- toYaml $.Values.resources | nindent 12 }}
+          imagePullSecrets:
+            {{- if $.Values.imagePullSecrets }}
+            {{- include "ks-service-batchjob.imagePullSecrets" $ | nindent 8 }}
+            {{- end }}
+          volumes:
+            {{- if $.Values.volumes }}
+            {{- include "ks-service-batchjob.volumes" $ | nindent 8 }}
+            {{- end }}
+{{- end }}

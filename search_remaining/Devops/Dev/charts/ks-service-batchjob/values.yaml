@@ -1,0 +1,46 @@
+# Image configuration
+image:
+  repository: harbor.ext.hp.com/knowledge_search/ks_service_batchjob_release_to_daily
+  tag: latest
+  pullPolicy: Always
+
+# Jobs configuration for different tasks
+jobs:
+  - name: "ks-service-batchjob-runtasks"
+    schedule: "0 0 * * *"        # Schedule for the first task
+    command: ". /opt/env/bin/activate && python run_tasks.py"
+  - name: "ks-service-batchjob-historical"
+    schedule: "0 0 * * *"        # Schedule for the second task
+    command: ". /opt/env/bin/activate && python run_tasks.py --historical kaas docebo kz"
+  - name: "ks-service-batchjob-cleaner"
+    schedule: "0 0 * * *"       # Schedule for the third task
+    command: ". /opt/env/bin/activate && python run_cleaner_tasks.py"
+
+# Backoff limit
+backoffLimit: 2
+
+# Environment secrets
+envSecretName: ks-db-s
+
+# Image pull secrets
+imagePullSecrets:
+  - name: harborcred-new-1
+
+# Service account name
+serviceAccountName: ks-service-nest
+
+# Resource configuration
+resources: {}
+
+# Volumes
+volumes:
+  - name: shared-data
+    emptyDir: {}
+
+# CronJob settings
+concurrencyPolicy: Allow
+failedJobsHistoryLimit: 1
+successfulJobsHistoryLimit: 3
+
+# Namespace (already exists)
+namespace: knowledgesearch

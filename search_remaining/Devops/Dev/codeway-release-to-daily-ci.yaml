@@ -1,0 +1,285 @@
+# resources:
+#   repositories:
+#     - repository: templates
+#       type: githubenterprise
+#       name: codeway/templates
+#       endpoint: ghe
+
+# trigger:
+#   branches:
+#     include:
+#       - release_to_daily
+#   paths:
+#     exclude:
+#       - Devops/Dev/charts
+#       - Devops/Dev/codeway-release-to-daily-ci.yml
+#       - Devops/Dev/codeway-release-to-daily-cd.yml
+
+# variables:
+#   - group: nextjs-knowledgesearch
+#   - name: branch
+#     value: release_to_daily
+
+# stages:
+#   - template: templates/codeway-docker-image-v1-beta2.yaml@templates
+#     parameters:
+#       anchoreScan: false
+#       trivyScan: false
+#       project: knowledge_search
+#       dockerfile: Dockerfile
+#       repo: ks_service_nest_${{ variables.branch }}
+#       registryType: harbor
+#       releaseBranch: ${{ variables.branch }}
+#       registryParameters:
+#         - registry: harbor-knowledge_search
+
+#   - stage: Run_Test_Cases
+#     displayName: Run Test Cases
+#     variables:
+#       - template: lib/codeway-ephemeral-pool.yml@templates
+#     jobs:
+#       - job: RunShellScript
+#         displayName: Run Test Cases
+#         pool: ${{ variables.pool }}
+#         steps:
+#           - task: Docker@2
+#             displayName: Harbor Login
+#             inputs:
+#               containerRegistry: harbor-knowledge_search
+#               command: login
+#           - task: DownloadSecureFile@1
+#             name: Envfile
+#             inputs:
+#               secureFile: '.env'
+#           - script: sh testcases.sh password harbor.ext.hp.com/knowledge_search/ks_service_nest_${{ variables.branch }}:latest $(Pipeline.Workspace)
+#             displayName: Run Test Script
+
+#           - task: PublishPipelineArtifact@1
+#             inputs:
+#               targetPath: "$(Pipeline.Workspace)"
+#               artifactName: testcase_artifacts
+
+#   - stage: SonarQube_scanning
+#     displayName: SonarQube Scanning
+#     variables:
+#       - template: lib/codeway-default-pool.yml@templates
+#     jobs:
+#       - job: SonarScan
+#         displayName: SonarQube Scanning
+#         pool: ${{ variables.pool }}
+#         steps:
+#           - script: |
+#               DOWNLOAD_URL=https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
+#               TAR_SHA256=$(wget https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz.sha256 -q -O -)
+#               echo "java version: 11"
+#               mkdir -p $(Agent.WorkFolder)/_cache/openjdk
+#               FILE="$(Agent.WorkFolder)/_cache/openjdk/openjdk-11_bin.tar.gz"
+#               echo "##vso[task.setvariable variable=jdkFile]${FILE}"
+#               echo "$TAR_SHA256 $FILE" | sha256sum -c || true
+#               if [[ ! -f "$FILE" ]]; then
+#                 echo "Downloading jdk..."
+#                 rm -f $FILE
+#                 wget -O $FILE $DOWNLOAD_URL
+#               else
+#                 echo "OpenJdk found, skipping download."
+#               fi
+#             displayName: Install Java
+
+#           - task: JavaToolInstaller@0
+#             displayName: Use Java 11
+#             inputs:
+#               versionSpec: 11
+#               jdkArchitectureOption: x64
+#               jdkSourceOption: LocalDirectory
+#               jdkFile: "$(Agent.WorkFolder)/_cache/openjdk/openjdk-11_bin.tar.gz"
+#               jdkDestinationDirectory: "$(Agent.ToolsDirectory)/openjdk-11/"
+
+#           - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+#             displayName: Prepare analysis on SonarQube
+#             inputs:
+#               SonarQube: SonarQube
+#               scannerMode: CLI
+#               configMode: manual
+#               cliProjectKey: "KWS_KnowledgeSearch_N-API"
+#               cliProjectName: "KnowledgeSearch_N-API"
+#               cliProjectVersion: $(Build.BuildNumber)
+#               cliSources: .
+#               extraProperties: |
+#                 sonar.projectKey=ks_service_nest_release_to_daily
+#                 sonar.projectVersion=1.0
+#                 sonar.sources=app/
+#                 sonar.language=python
+#                 sonar.python.version=3.10
+#                 sonar.exclusions=**/controllers/**
+#                 sonar.python.analysisEngine=pylint
+
+#           - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+#             displayName: Run Code Analysis
+
+#   - template: templates/codeway-helm-library-v0.yaml@templates
+#     parameters:
+#       releaseBranch: ${{ variables.branch }}
+#       chartName: ks-service-nest-release-to-daily
+#       chartDir: $(Build.SourcesDirectory)/Devops/Dev/charts/ks-service
+#       versionMajorMinor: '5.5'
+#       publishRepositories:
+#         - name: ks-service-nest-release-to-daily
+#           url: https://harbor.ext.hp.com/chartrepo/knowledge_search
+#           username: $(harbor_username)
+#           password: $(harbor_password)
+#           type: harbor
+
+
+resources:
+  repositories:
+    - repository: templates
+      type: githubenterprise
+      name: codeway/templates
+      endpoint: ghe
+
+trigger:
+  branches:
+    include:
+      - release_to_daily
+  paths:
+    exclude:
+      - Devops/Dev/charts
+      - Devops/Dev/codeway-release-to-daily-ci.yml
+      - Devops/Dev/codeway-release-to-daily-cd.yml
+
+variables:
+  - group: nextjs-knowledgesearch
+  - name: branch
+    value: release_to_daily
+
+stages:
+  - template: templates/codeway-docker-image-v1-beta2.yaml@templates
+    parameters:
+      anchoreScan: false
+      trivyScan: false
+      project: knowledge_search
+      dockerfile: Dockerfile
+      repo: ks_service_nest_${{ variables.branch }}
+      registryType: harbor
+      releaseBranch: ${{ variables.branch }}
+      registryParameters:
+        - registry: harbor-knowledge_search
+
+  - stage: Run_Test_Cases
+    displayName: Run Test Cases
+    variables:
+      - template: lib/codeway-ephemeral-pool.yml@templates
+    jobs:
+      - job: RunShellScript
+        displayName: Run Test Cases
+        pool: ${{ variables.pool }}
+        steps:
+          - task: Docker@2
+            displayName: Harbor Login
+            inputs:
+              containerRegistry: harbor-knowledge_search
+              command: login
+              failOnStderr: true  # Ensures failure if there are errors during login
+
+          - task: DownloadSecureFile@1
+            name: Envfile
+            inputs:
+              secureFile: '.env'
+          
+          - script: |
+              sh testcases.sh password harbor.ext.hp.com/knowledge_search/ks_service_nest_${{ variables.branch }}:latest $(Pipeline.Workspace)
+              if [ $? -ne 0 ]; then
+                echo "Test cases failed"
+                exit 0
+              fi
+            displayName: Run Test Script
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: "$(Pipeline.Workspace)"
+              artifactName: testcase_artifacts
+
+          # - script: |
+          #     sudo apt-get install -y mailutils
+          #     if [ $? -ne 0 ]; then
+          #       echo "Failed to install mailutils"
+          #       exit 0
+          #     fi
+          #     echo "The test cases have been executed. Please find the reports attached." | mail -s "Test Cases Report" \
+          #     -A $(Pipeline.Workspace)/report/report.html neha.prasad@hp.com
+          #     if [ $? -ne 0 ]; then
+          #       echo "Failed to send email"
+          #       exit 0
+          #     fi
+          #   displayName: Send Email with Test Report
+
+
+  - stage: SonarQube_scanning
+    displayName: SonarQube Scanning
+    variables:
+      - template: lib/codeway-default-pool.yml@templates
+    jobs:
+      - job: SonarScan
+        displayName: SonarQube Scanning
+        pool: ${{ variables.pool }}
+        steps:
+          - script: |
+              DOWNLOAD_URL=https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
+              TAR_SHA256=$(wget https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz.sha256 -q -O -)
+              echo "java version: 11"
+              mkdir -p $(Agent.WorkFolder)/_cache/openjdk
+              FILE="$(Agent.WorkFolder)/_cache/openjdk/openjdk-11_bin.tar.gz"
+              echo "##vso[task.setvariable variable=jdkFile]${FILE}"
+              echo "$TAR_SHA256 $FILE" | sha256sum -c || true
+              if [[ ! -f "$FILE" ]]; then
+                echo "Downloading jdk..."
+                rm -f $FILE
+                wget -O $FILE $DOWNLOAD_URL
+              else
+                echo "OpenJdk found, skipping download."
+              fi
+            displayName: Install Java
+
+          - task: JavaToolInstaller@0
+            displayName: Use Java 11
+            inputs:
+              versionSpec: 11
+              jdkArchitectureOption: x64
+              jdkSourceOption: LocalDirectory
+              jdkFile: "$(Agent.WorkFolder)/_cache/openjdk/openjdk-11_bin.tar.gz"
+              jdkDestinationDirectory: "$(Agent.ToolsDirectory)/openjdk-11/"
+
+          - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+            displayName: Prepare analysis on SonarQube
+            inputs:
+              SonarQube: SonarQube
+              scannerMode: CLI
+              configMode: manual
+              cliProjectKey: "KWS_KnowledgeSearch_N-API"
+              cliProjectName: "KnowledgeSearch_N-API"
+              cliProjectVersion: $(Build.BuildNumber)
+              cliSources: . 
+              extraProperties: |
+                sonar.projectKey=ks_service_nest_release_to_daily
+                sonar.projectVersion=1.0
+                sonar.sources=app/
+                sonar.language=python
+                sonar.python.version=3.10
+                sonar.exclusions=**/controllers/**
+                sonar.python.analysisEngine=pylint
+
+          - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+            displayName: Run Code Analysis
+
+  - template: templates/codeway-helm-library-v0.yaml@templates
+    parameters:
+      releaseBranch: ${{ variables.branch }}
+      chartName: ks-service-nest-release-to-daily
+      chartDir: $(Build.SourcesDirectory)/Devops/Dev/charts/ks-service
+      versionMajorMinor: '5.5'
+      publishRepositories:
+        - name: ks-service-nest-release-to-daily
+          url: https://harbor.ext.hp.com/chartrepo/knowledge_search
+          username: $(harbor_username)
+          password: $(harbor_password)
+          type: harbor

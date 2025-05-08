@@ -1,0 +1,93 @@
+resources:
+  pipelines:
+    - pipeline: sourcePipeline
+      source: '\Knowledgsearch\daily\ks-nest\knowledgesearch.knowledge-search-api-CI'  # Correct pipeline name
+      trigger:
+        branches:
+          include:
+            - release_to_daily  # Ensure this branch name is correct
+  repositories:
+    - repository: templates
+      type: githubenterprise
+      name: codeway/templates
+      endpoint: ghe
+
+parameters:
+  - name: chart_version
+    displayName: Helm Chart Application version
+    type: string
+    default: '""'
+  - name: release_name
+    default: ks-service-nest-release-to-daily
+    displayName: Release Name for Application
+    type: string
+  - name: deployment_version
+    default: v2
+    displayName: Version of Application
+    type: string
+  - name: image_repository
+    default: "harbor.ext.hp.com/knowledge_search/ks_service_nest_release_to_daily"
+    displayName: Application Docker Registry URL
+    type: string
+  - name: image_tag
+    default: "latest"
+    displayName: Tag for the Application Docker Image
+    type: string
+  - name: namespace
+    default: knowledgesearch
+    displayName: Kubernetes Namespace 
+    type: string
+
+variables:
+  - group: Github
+  - group: nextjs-knowledgesearch
+  - group: Terragrunt
+  - name: eks_cluster_name
+    value: ks_dev_cluster
+  - name: aws_region
+    value: us-west-2
+  - name: chart_repo
+    value: "https://harbor.ext.hp.com/chartrepo/knowledge_search"
+  - name: chart_name
+    value: ks-service-nest-release-to-daily
+
+stages:
+- stage: HelmDeploy
+  variables:
+      - template: lib/codeway-ephemeral-pool.yml@templates
+  displayName: HelmDeploy
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    environment: 'dev-knowledgesearch'
+    pool: ${{ variables.pool }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: lib/installers/aws-cli-v2.yaml@templates
+          - template: steps/aws/aws-assume-role-v0.yaml@templates
+            parameters:
+              roleARN: $(role_arn)
+              externalId: $(external_id)
+          - script: aws eks --region ${{ variables.aws_region }} update-kubeconfig --name ${{ variables.eks_cluster_name }} --kubeconfig kubeconfig
+            displayName: Getting Kubernetes Config
+          - task: HelmInstaller@0
+            displayName: Install Helm and Kubectl
+            inputs:
+              helmVersion: '3.7.0'
+              checkLatestHelmVersion: false
+              installKubectl: true
+              kubectlVersion: '1.28.0'
+              checkLatestKubectl: false
+          - script: |
+              helm repo add ${{ parameters.release_name }}-repo ${{ variables.chart_repo }} --username '$(harbor_username)' --password '$(harbor_password)'
+            displayName: Add Helm Repo
+          - script: |
+              helm upgrade --install ${{ parameters.release_name }}-${{ parameters.deployment_version }} ${{ parameters.release_name}}-repo/${{ variables.chart_name }} --version ${{ parameters.chart_version }} --kubeconfig kubeconfig --wait --namespace ${{ parameters.namespace }} --set deployment.version=${{ parameters.deployment_version }} --set image.repository=${{ parameters.image_repository }} --set image.tag=${{ parameters.image_tag }} --timeout 13m
+            displayName: Install Helm Chart 
+          - task: DeleteFiles@1
+            inputs:
+              Contents: kubeconfig
+          - template: steps/aws/reset-assumerole-env-vars-v0.yaml@templates                
+

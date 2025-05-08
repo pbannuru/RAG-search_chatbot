@@ -1,0 +1,6 @@
+{
+    "name": "local Build and Deploy",
+    "request": "launch",
+    "type": "bashdb",
+    "preLaunchTask": "localBuildAndDeploy"
+}
