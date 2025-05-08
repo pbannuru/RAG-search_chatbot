@@ -1,0 +1,2 @@
+* * * * * echo hello  >> /logs/job.output 2>> /logs/job.errors
+

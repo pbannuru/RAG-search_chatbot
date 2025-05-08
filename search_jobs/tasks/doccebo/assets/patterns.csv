@@ -1,0 +1,112 @@
+Device Name,Pattern
+HP Indigo 1x000 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?1x000(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 3xx0 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?3xx0(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 7XXX Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?7XXX(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 5x00 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?5x00(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 6x00 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?6x00(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 8x00 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?8x00(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 6000 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?6000(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 6800 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?6800(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 20000 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?20000(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 30000 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?30000(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 2000 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?2000(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 6600 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?6600(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo ws4xx0 Series Digital Presses,\b(?:HP\s*)?(?:Indigo\s*)?ws4xx0(?:\s*(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 8K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?8K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 100K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?100K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 10000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?10000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 10000 HD Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?(10000)(?:\s*(?:HD\s*)?(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 100k HD Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?(100k)(?:\s*(?:HD\s*)?(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 15k HD Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?(15k)(?:\s*(?:HD\s*)?(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo 10r Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?10r(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 12000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?12000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 12000 HD Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?(12000)(?:\s*(?:HD\s*)?(?:Series|Digital\s*Press(?:es)?|Press(?:es)?))*\b
+HP Indigo WS6600 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS6600(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo WS6x00 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS6x00(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo WS6600p Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS6600p(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo WS6800p Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS6800p(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 6900 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?6900(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo WS6800 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS6800(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7600 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7600(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7x00 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7x00(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7800 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7800(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7500 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7500(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7r Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7r(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7eco Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7eco(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 20000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?20000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 8000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?8000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 30000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?30000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 5600 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?5600(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 5900 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?5900(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 5000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?5000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 3500 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?3500(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 3550 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?3550(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 3050 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?3050(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 3000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?3000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 6K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?6K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 35K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?35K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 7900 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?7900(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 25K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?25K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 15K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?15K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo WS6000p Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS6000p(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo WS6000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS6000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 6r Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?6r(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 6P Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?6P(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 5r Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?5r(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 5500 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?5500(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo ws2000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?WS2000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo s2000 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?s2000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo ws4000 Digital Press ,\b(?:HP\s*)?(?:Indigo\s*)?ws4000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo ws4050 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?ws4050(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo ws4500 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?ws4500(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo WS4600 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?ws4600(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo W7200 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?W7200(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo W7250 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?W7250(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo W72x0 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?W72x0(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 200K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?200K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo V12 Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?V12(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 120K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?120K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 18K Digital Press,\b(?:HP\s*)?(?:Indigo\s*)?18K(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 5500 Press,\b(?:HP\s*)?(?:Indigo\s*)?5500(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 1000 Press,\b(?:HP\s*)?(?:Indigo\s*)?1000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo 1050 Press,\b(?:HP\s*)?(?:Indigo\s*)?1050(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP Indigo S2000 Press,\b(?:HP\s*)?(?:Indigo\s*)?S2000(?:\s*(?:Digital\s*Press|Press(?:es)?))*\b
+HP PageWide Web Press T11xx,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T11xx(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T2xx,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T2xx(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T3xx,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T3xx(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T4xx,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T4xx(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T200,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T200(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T230,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T230(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T235,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T235(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T240 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T240(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T260M,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T260M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T260ML,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T260ML(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T300,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T300(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T300M,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T300M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T350,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T350(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T350M,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T350M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T360,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T360(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T360M,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T360M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T400,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T400(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T400M,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T400M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T400S,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T400S(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T410,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T410(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T410M,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T410M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T470 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T470(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T480 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T480(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T490 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T490(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T490M HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T490M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T1100S,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T1100S(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T240M HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T240M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T370 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T370(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T380 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T380(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T390 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T390(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T390M HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T390M(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T1170,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T1170(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T1190,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T1190(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T250 HD,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T250(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T470S,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T470S(?:s)?(?:\s*HD)?\b
+HP PageWide A2200,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*A2200(?:s)?(?:\s*HD)?\b
+HP PageWide Web Press T485,\b(?:HP\s*)?(?:PageWide|PWP)?(?:\s*Web)?(?:\s*Press)?\s*T485(?:s)?(?:\s*HD)?\b
