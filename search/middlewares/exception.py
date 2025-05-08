@@ -1,0 +1,118 @@
+import logging
+import re
+from traceback import print_exception
+import traceback
+from fastapi import HTTPException, Request
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.internal.utils.timer import Timer
+from app.services.core_audit_log_service import CoreAuditLogService
+from app.sql_app.database import DbDepends
+from app.sql_app.dbenums.audit_log_enums import ContextEnum, ServiceEnum
+from app.sql_app.dbmodels.core_audit_log import CoreAuditLog
+
+logger = logging.getLogger(__name__)
+
+
+class ExceptionHandlerMiddleware(BaseHTTPMiddleware):
+
+    async def dispatch(self, request: Request, call_next):
+        route = request.url.path
+        if (
+            route.endswith("docs")
+            or route.endswith("redoc")
+            or route.endswith("openapi.json")
+        ):
+            return await call_next(request)
+
+        timer = Timer().start_timer()
+        if not request.user.is_authenticated:
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "error": "Unauthorized",
+                    "messages": f"Please pass a valid token associated with a valid tenant",
+                },
+            )
+
+        with DbDepends() as db:
+
+            try:
+                response = await call_next(request)
+                timer.end_timer()
+
+                await self.audit_info_log(request, timer, db)
+
+                return response
+            except Exception as e:
+                timer.end_timer()
+                print_exception(e)
+                audit_error_log = await self.audit_error_log(request, timer, db)
+                return JSONResponse(
+                    status_code=500,
+                    content={
+                        "error": e.__class__.__name__,
+                        "messages": f"Internal Server Error. LogID - {audit_error_log.id}",
+                        "error_log_id": audit_error_log.id,
+                    },
+                )
+
+    @staticmethod
+    async def audit_error_log(request: Request, timer: Timer, db) -> CoreAuditLog:
+        # Access query parameters to form log_input dict
+        log_input_dict, route, service = ExceptionHandlerMiddleware.retrive_log_details(
+            request
+        )
+        audit_error_log = await CoreAuditLogService(db).log_service_api_error(
+            route="/" + route,
+            context=ContextEnum.API,
+            service=service,
+            tenant_id=request.user.uuid,
+            log_input=log_input_dict,
+            duration_ms=timer.elapsed_time_ms,
+            stack_trace=traceback.format_exc(),
+        )
+        return audit_error_log
+
+    @staticmethod
+    async def audit_info_log(request: Request, timer: Timer, db):
+        # Access query parameters to form log_input dict
+        log_input_dict, route, service = ExceptionHandlerMiddleware.retrive_log_details(
+            request
+        )
+        await CoreAuditLogService(db).log_service_api(
+            route="/" + route,
+            context=ContextEnum.API,
+            service=service,
+            tenant_id=request.user.uuid,
+            log_input=log_input_dict,
+            duration_ms=timer.elapsed_time_ms,
+        )
+
+    @staticmethod
+    def retrive_log_details(request: Request):
+        # Access query and path parameters(if any) to form log_input dict
+        log_input_dict = {
+            "query_params": dict(request.query_params),
+        }
+        if request.path_params != {}:
+            log_input_dict["path_params"] = request.path_params
+
+        # Use regular expression pattern to exclude `/api/<str>/` from route path
+        # examples for route path: `/api/v1/search`, `/api/v20/search`, `/api/internal/search`
+        urlRoute = request.url.path
+        pattern = r"\/api\/([^!\/]+)\/(.*)"
+        regex = re.search(pattern, urlRoute)
+        route = regex.group(2)
+        service_name = regex.group(1)
+
+        service = None
+        if service_name == "v1":
+            if route == "search" or route == "suggest":
+                service = ServiceEnum.CORE
+            else:
+                service = ServiceEnum.EXTRAS
+        elif service_name == "internal":
+            service = ServiceEnum.ISEARCHUI
+
+        return log_input_dict, route, service
